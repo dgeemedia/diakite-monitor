@@ -1,7 +1,10 @@
+// src/app/api/session/route.ts
 import { NextRequest, NextResponse } from 'next/server';
 import bcrypt from 'bcryptjs';
 import { createSession, destroySession, getSessionUser } from '@/lib/session';
 import { prisma } from '@/lib/prisma';
+
+export const dynamic = 'force-dynamic';
 
 async function logAttempt(email: string, success: boolean, userId: string | null, req: NextRequest) {
   await prisma.monitorLoginLog.create({

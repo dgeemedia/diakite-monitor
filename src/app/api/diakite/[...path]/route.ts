@@ -1,3 +1,4 @@
+// src/app/api/diakite/[...path]/route.ts
 // Server-side proxy: browser -> this route -> diakite.onrender.com/api/admin/*
 //
 // The monitoring bot's JWT never reaches the browser. This route is
@@ -7,6 +8,8 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { getDiakiteToken, getDiakiteBaseUrl } from '@/lib/diakiteAuth';
+
+export const dynamic = 'force-dynamic';
 
 // Explicit allowlist of admin sub-paths this dashboard is permitted to read.
 // Add to this as you wire up more pages — deliberately NOT a wildcard, so a
