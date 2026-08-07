@@ -21,7 +21,9 @@ import type {
   ActivityLogEntry,
 } from '@/types/diakite';
 
-const NOTIFY_DEBOUNCE_MS = 30 * 60 * 1000; // don't re-notify the same alert more than every 30 min
+export const dynamic = 'force-dynamic';
+
+const NOTIFY_DEBOUNCE_MS = 30 * 60 * 1000;
 
 async function fetchAdmin<T>(path: string): Promise<T> {
   const token = await getDiakiteToken();
