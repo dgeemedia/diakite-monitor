@@ -1,3 +1,4 @@
+// src/app/layout.tsx
 import type { Metadata } from 'next';
 import { AppShell } from '@/components/layout/AppShell';
 import './globals.css';

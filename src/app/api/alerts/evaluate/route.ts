@@ -1,3 +1,4 @@
+// src/app/api/alerts/evaluate/route.ts
 // Call this on a schedule (Vercel Cron, e.g. every 5 minutes) to check
 // current Diakite state against thresholds, persist alert state, and fire
 // a debounced notification when a condition newly triggers or newly clears.

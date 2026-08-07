@@ -1,3 +1,4 @@
+// src/types/diakite.ts
 // Shapes mirrored directly from backend/src/controllers/admin.controller.js
 // Keep these in sync if the controller's response shape changes.
 
