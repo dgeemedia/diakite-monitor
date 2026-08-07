@@ -1,0 +1,105 @@
+// This is the MONITOR APP's own database — small and separate from Diakite's
+// production Postgres. It only stores alert state, poll snapshots, and
+// anything this dashboard needs to remember between requests.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+// One row per distinct alert condition (e.g. "payment_error_rate",
+// "duopay_overdue_check_stale"). Debounces notifications so a flapping
+// condition doesn't spam email/SMS on every poll cycle.
+model AlertState {
+  id              String    @id @default(cuid())
+  alertKey        String    @unique
+  isActive        Boolean   @default(false)
+  severity        String    @default("warning") // info | warning | critical
+  message         String?
+  lastTriggeredAt DateTime?
+  lastResolvedAt  DateTime?
+  lastNotifiedAt  DateTime?
+  updatedAt       DateTime  @updatedAt
+  createdAt       DateTime  @default(now())
+
+  @@index([isActive])
+}
+
+// Rolling snapshots pulled from Diakite's /api/admin/* endpoints, so the
+// dashboard can chart trends over time even though Diakite's own API only
+// gives point-in-time aggregates.
+model MetricSnapshot {
+  id          String   @id @default(cuid())
+  metricKey   String // e.g. "dashboard.revenue.today", "payments.pendingCount"
+  value       Float
+  metadata    Json?
+  capturedAt  DateTime @default(now())
+
+  @@index([metricKey, capturedAt])
+}
+
+// Local record of when this app last polled Diakite successfully — lets the
+// UI show "last synced Xs ago" and distinguish "Diakite is down" from
+// "this dashboard's poller is stuck".
+model PollLog {
+  id         String   @id @default(cuid())
+  source     String // e.g. "dashboard-stats", "payment-stats"
+  status     String // success | failed
+  durationMs Int?
+  error      String?
+  createdAt  DateTime @default(now())
+
+  @@index([source, createdAt])
+}
+
+// One row per high-risk admin action we've already flagged/notified on,
+// keyed by the source ActivityLog id — prevents re-notifying for the same
+// event on every 5-minute evaluator run.
+model FlaggedActivity {
+  id           String   @id @default(cuid())
+  diakiteLogId String   @unique
+  action       String
+  severity     String // high | critical
+  actorEmail   String?
+  actorName    String?
+  message      String
+  amount       Float?
+  notifiedAt   DateTime @default(now())
+  occurredAt   DateTime
+
+  @@index([occurredAt])
+}
+
+// ── This app's own accounts — separate from Diakite's User table entirely.
+// Replaces the single shared MONITOR_APP_PASSWORD so each person who views
+// this dashboard has their own credential and their own login trail.
+model MonitorUser {
+  id           String    @id @default(cuid())
+  email        String    @unique
+  passwordHash String
+  name         String?
+  isActive     Boolean   @default(true)
+  createdAt    DateTime  @default(now())
+  lastLoginAt  DateTime?
+}
+
+// Every login attempt against this app, success or failure — this app's
+// own equivalent of the admin_login / admin_login_failed pattern applied
+// to Diakite's backend.
+model MonitorLoginLog {
+  id        String   @id @default(cuid())
+  email     String
+  userId    String?
+  success   Boolean
+  ip        String?
+  userAgent String?
+  createdAt DateTime @default(now())
+
+  @@index([createdAt])
+  @@index([email])
+}
