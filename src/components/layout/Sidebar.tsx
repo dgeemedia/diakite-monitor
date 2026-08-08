@@ -1,3 +1,4 @@
+// src/components/layout/Sidebar.tsx
 'use client';
 
 import Link from 'next/link';
@@ -17,7 +18,12 @@ const LINKS = [
   { href: '/alerts', label: 'Alerts' },
 ];
 
-export function Sidebar() {
+interface SidebarProps {
+  isOpen?: boolean;
+  onClose?: () => void;
+}
+
+export function Sidebar({ isOpen = false, onClose }: SidebarProps) {
   const pathname = usePathname();
   const router = useRouter();
   const [user, setUser] = useState<{ email: string; name: string | null } | null>(null);
@@ -36,14 +42,18 @@ export function Sidebar() {
   };
 
   return (
-    <aside className="sidebar" style={{ display: 'flex', flexDirection: 'column' }}>
-      <div className="brand">Diakite / Monitor</div>
+    <aside className={`sidebar ${isOpen ? 'sidebar-open' : ''}`} style={{ display: 'flex', flexDirection: 'column' }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+        <div className="brand">Diakite / Monitor</div>
+        <button className="sidebar-close-btn" onClick={onClose} aria-label="Close menu">✕</button>
+      </div>
       <nav style={{ flex: 1 }}>
         {LINKS.map((link) => (
           <Link
             key={link.href}
             href={link.href}
             className={`nav-link ${pathname === link.href ? 'active' : ''}`}
+            onClick={onClose}
           >
             {link.label}
           </Link>

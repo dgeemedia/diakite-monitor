@@ -122,12 +122,6 @@ button, input {
 .grid-3 { grid-template-columns: repeat(3, 1fr); }
 .grid-2 { grid-template-columns: repeat(2, 1fr); }
 
-@media (max-width: 980px) {
-  .grid-4, .grid-3, .grid-2 { grid-template-columns: repeat(2, 1fr); }
-  .shell { grid-template-columns: 1fr; }
-  .sidebar { display: none; }
-}
-
 .card {
   background: var(--panel);
   border: 1px solid var(--border);
@@ -278,4 +272,97 @@ tr:last-child td { border-bottom: none; }
   font-size: 12.5px;
   margin-bottom: 12px;
   font-family: var(--mono);
+}
+
+/* ── Mobile menu button, close button, overlay — hidden on desktop ──────── */
+.mobile-menu-btn {
+  display: none;
+  position: fixed;
+  top: 14px;
+  left: 14px;
+  z-index: 40;
+  background: var(--panel-raised);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  width: 38px;
+  height: 38px;
+  align-items: center;
+  justify-content: center;
+  font-size: 17px;
+  color: var(--text);
+  cursor: pointer;
+}
+
+.sidebar-close-btn {
+  display: none;
+  background: none;
+  border: none;
+  font-size: 16px;
+  color: var(--muted);
+  cursor: pointer;
+}
+
+.sidebar-overlay {
+  display: none;
+}
+
+/* ── Responsive breakpoint ────────────────────────────────────────────── */
+@media (max-width: 980px) {
+  .grid-4, .grid-3, .grid-2 { grid-template-columns: repeat(2, 1fr); }
+  .shell { grid-template-columns: 1fr; }
+
+  .mobile-menu-btn { display: flex; }
+
+  .sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    width: 240px;
+    transform: translateX(-100%);
+    transition: transform 0.2s ease;
+    z-index: 50;
+    background: var(--panel);
+  }
+
+  .sidebar.sidebar-open {
+    transform: translateX(0);
+  }
+
+  .sidebar-close-btn {
+    display: block;
+  }
+
+  .sidebar-overlay {
+    display: block;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 45;
+  }
+
+  .main {
+    padding: 64px 16px 40px;
+  }
+}
+
+@media (max-width: 560px) {
+  .grid-4, .grid-3, .grid-2 { grid-template-columns: 1fr; }
+
+  table {
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+
+  .page-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+  }
+
+  .login-card {
+    width: 90vw;
+    max-width: 340px;
+  }
 }
