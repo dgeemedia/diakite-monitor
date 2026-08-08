@@ -60,8 +60,7 @@ function LoginForm() {
           {loading ? 'Signing in…' : 'Sign in'}
         </button>
         <p style={{ marginTop: 14, fontSize: 11.5, color: 'var(--muted)', fontFamily: 'var(--mono)' }}>
-          No account? Ask whoever runs this dashboard to create one with{' '}
-          <code>pnpm create-user</code>.
+          No account? Ask whoever runs this dashboard to create you
         </p>
       </form>
     </div>

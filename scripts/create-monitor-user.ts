@@ -1,3 +1,4 @@
+// scripts/create-monitor-user.ts
 // Creates (or updates the password for) a monitor app user.
 //
 // Usage:
